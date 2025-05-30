@@ -24,4 +24,4 @@ fi
 
 DROPLET_STATUS=$(doctl compute droplet get "$droplet")
 
-echo "$TIMESTAMP, Droplet $droplet status is $DROPLET_STATUS" | tee -a $LOG_FILE
+echo "Date & Time: $TIMESTAMP, Droplet $droplet status is $DROPLET_STATUS" | tee -a $LOG_FILE
