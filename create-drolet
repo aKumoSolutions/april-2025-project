@@ -1,0 +1,6 @@
+#!/bin/bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
+  -d '{"name":"example.com","region":"nyc3","size":"s-1vcpu-1gb","image":"ubuntu-20-04-x64","ssh_keys":["fe:17:db:0c:90:11:17:35:d2:67:0c:5d:db:5d:71:51"],"backups":true,"ipv6":true,"monitoring":true,"tags":["env:prod","web"],"user_data":"#cloud-config\nruncmd:\n  - touch /test.txt\n","vpc_uuid":""}' \
+  "https://api.digitalocean.com/v2/droplets"
