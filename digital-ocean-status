@@ -1,8 +1,0 @@
-#!/bin/bash
-status=$(curl -s https://status.digitalocean.com/api/v2/status.json | jq -r .status.indicator)
-
-if [[ $status != "none" ]]; then 
-  echo "droplets are in danger"
-else
-  echo "droplets are healthy"
-fi
