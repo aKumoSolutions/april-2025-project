@@ -1,0 +1,13 @@
+#!/bin/bash
+# Your task is to write a bash script which will check 
+# the status of apache service, ensures the apache service is in active state and log this data under
+#  /var/log/apache-health.log . Ensure to timestamp each log.
+# Once you finish writing your script, push it to Github and create a pull request.
+app=httpd
+
+apache_status=$(systemctl status httpd | head -n 3 | tail -n 1 | awk -F " " '{ print $2 }')
+if [ $apache_status = "active" ]; then
+           echo " $app status is active - $(date) ." >> /var/log/apache-health.log
+ else
+           echo " $app status is either not active or unknown . "
+fi 
