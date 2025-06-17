@@ -1,27 +1,18 @@
 #!/bin/bash
+LOG_FILE="/var/log/droplethealth.log"
 
-LOG_FILE="/var/log/droplet-health.log"
-TIMESTAMP=$(date)
+{
+echo "====================="
+echo "$(date +'%Y-%m-%d %H:%M:%S') Starting to Check Droplet Status."
 
-if [[ "$(ping -c 1 8.8.8.8 | grep '100% packet loss' )" != "" ]]; then
-    echo "Internet isn't present" | tee -a $LOG_FILE
+status=$(curl -s https://status.digitalocean.com/api/v2/status.json | jq  .status)
+echo "$(date +'%Y-%m-%d %H:%M:%S') $status"
+
+indicator_status=$(curl -s https://status.digitalocean.com/api/v2/status.json | jq -r .status.indicator)
+if [[ $indicator_status != "none" ]]; then
+    echo "$(date +'%Y-%m-%d %H:%M:%S') Droplets are in danger"
 else
-    echo "Internet is present" | tee -a $LOG_FILE
+    echo "$(date +'%Y-%m-%d %H:%M:%S') Droplets are healthy"
 fi
-
-read -p "Enter droplet name: " droplet
-if ! doctl compute droplet get $droplet &> /dev/null; then
-    "Failed to get droplet info Starting installation of doctl"
-    dnf install epel-release -y
-    dnf install snapd
-    systemctl enable --now snapd.socket
-    ln -s /var/lib/snapd/snap /snap
-    snap install doctl
-    echo "Droplet cli installation successful" | tee -a $LOG_FILE
-else
-    echo "Droplet $droplet info is available" | tee -a $LOG_FILE
-fi
-
-DROPLET_STATUS=$(doctl compute droplet get "$droplet")
-
-echo "Date & Time: $TIMESTAMP, Droplet $droplet status is $DROPLET_STATUS" | tee -a $LOG_FILE
+echo "======================="
+} >> $LOG_FILE
